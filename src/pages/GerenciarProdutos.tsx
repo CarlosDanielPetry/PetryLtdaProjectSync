@@ -60,6 +60,20 @@ export default function GerenciarProdutos() {
     }
 
     try {
+      // Query para contar o total de produtos
+      const { count, error: countError } = await supabase
+        .from('produtos')
+        .select('*', { count: 'exact', head: true });
+
+      if (countError) {
+        console.error('Erro ao contar produtos:', countError);
+        setError(`Erro ao gerar código do produto: ${countError.message}`);
+        return;
+      }
+
+      const novoCodigo = (count || 0) + 1;
+
+      // Query para inserir o novo produto
       const { data, error: supabaseError } = await supabase
         .from('produtos')
         .insert([
@@ -71,7 +85,8 @@ export default function GerenciarProdutos() {
             prod_marca: formData.prod_marca.trim() || null,
             prod_situacao: formData.prod_situacao,
             prod_vmd: 0, // Valor padrão
-            prod_imagem: formData.prod_imagem || null
+            prod_imagem: formData.prod_imagem || null,
+            prod_codigo: novoCodigo // Novo campo com o código gerado
           }
         ])
         .select();
