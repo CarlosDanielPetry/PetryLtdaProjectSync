@@ -47,9 +47,9 @@ Isso iniciará o servidor de desenvolvimento.
 │   ├── lib                 # Diretório com as bibliotecas
 │   │   └── supabase.ts     # Cliente Supabase
 │   ├── pages               # Diretório com as páginas da aplicação
-│   │   ├── Inicio.tsx        # Página inicial
-│   │   ├── Login.tsx         # Página de login
-│   │   ├── Produtos.tsx      # Página de produtos
+│   │   ├── Inicio.tsx      # Página inicial
+│   │   ├── Login.tsx       # Página de login
+│   │   ├── Produtos.tsx    # Página de produtos
 │   │   └── ...             # Outras páginas
 │   ├── store               # Diretório com os stores do Zustand
 │   │   ├── authStore.ts    # Store de autenticação
@@ -109,6 +109,8 @@ netlify login
 netlify deploy --prod
 ```
 
-## Contribuição
+## Agradecimentos
 
-Contribuições são sempre bem-vindas! Sinta-se à vontade para abrir issues ou enviar pull requests.
+Carlos Daniel Petry - Carlosdanielpetry@outlook.com.br - Responsável: Frontend  
+Juliano dos Santos  - ju.neno@hotmail.com              - Responsável: Backend/front  
+Ricardo Petry       - Ricardopettry@hotmail.com        - Responsável: Backend  
