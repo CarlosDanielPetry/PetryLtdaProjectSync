@@ -10,7 +10,6 @@ export default defineConfig({
   plugins: [
     react({
       jsxRuntime: 'automatic',
-      fastRefresh: true,
       // babel: {
       //   plugins: ['@babel/plugin-transform-react-jsx'],
       // },

@@ -13,6 +13,7 @@ export default function Login() {
   const [resetRequestTime, setResetRequestTime] = useState<number | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { initialize } = useAuthStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +41,7 @@ export default function Login() {
       // Se o login no Auth foi bem sucedido, busca o perfil do usuário
       const { data: userData, error: userError } = await supabase
         .from('usuarios')
-        .select('*')
+        .select('usua_cargo')
         .eq('auth_user_id', authData.user.id)
         .single();
 
@@ -51,8 +52,14 @@ export default function Login() {
         throw new Error('Erro ao carregar perfil do usuário');
       }
 
-      // Login bem sucedido
-      navigate('/');
+      // Redireciona com base no cargo
+      const userCargo = userData.usua_cargo;
+      if (userCargo === 'C') {
+        navigate('/'); // Cliente
+      } else {
+        navigate('/relatorios'); // Desenvolvedor, Funcionário ou Administrador
+      }
+      initialize();
     } catch (error: any) {
       console.error('Erro no login:', error);
       setError(error.message || 'Erro ao fazer login. Por favor, tente novamente.');
