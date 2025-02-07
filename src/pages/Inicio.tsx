@@ -29,7 +29,7 @@ export default function Inicio() {
 
       // Group products by prod_grupo
       const grouped = (data || []).reduce((acc: GroupedProducts, product) => {
-        const group = product.prod_Grupo || 'Sem Categoria';
+        const group = product.prod_grupo || 'Sem Categoria';
         if (!acc[group]) {
           acc[group] = [];
         }
