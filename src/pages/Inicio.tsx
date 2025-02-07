@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuthStore } from '../store/authStore';
 import { supabase } from '../lib/supabase';
 import { Produto } from '../types';
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingBag, Flame } from 'lucide-react';
 
 interface GroupedProducts {
   [key: string]: Produto[];
@@ -19,15 +19,15 @@ export default function Inicio() {
 
   async function loadProducts() {
     try {
-      // query Estoque
       const { data, error } = await supabase
         .from('produtos')
-        .select('*, prod_estoque')
+        .select('*')
         .eq('prod_situacao', 'A')
         .order('prod_descricao');
 
       if (error) throw error;
 
+      // Group products by prod_grupo
       const grouped = (data || []).reduce((acc: GroupedProducts, product) => {
         const group = product.prod_grupo || 'Sem Categoria';
         if (!acc[group]) {
@@ -56,7 +56,7 @@ export default function Inicio() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <h1 className="text-4xl font-display text-gray-900 mb-4">
           Ardor &amp; Arte
         </h1>
         <p className="text-lg text-gray-600">
@@ -66,14 +66,14 @@ export default function Inicio() {
 
       <div className="space-y-12">
         {Object.entries(groupedProducts).map(([group, products]) => (
-          <div key={`group-${group}`} className="bg-white rounded-lg shadow-lg p-6">
+          <div key={group} className="bg-white rounded-lg shadow-lg p-6">
             <h2 className="text-2xl font-bold text-gray-800 mb-6 pb-2 border-b">
               {group}
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {products.map((product) => (
                 <div
-                  key={`product-${product.id}`}
+                  key={product.id}
                   className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-xl hover:-translate-y-1"
                 >
                   <div className="p-4">
@@ -93,7 +93,7 @@ export default function Inicio() {
                     </p>
                     <div className="flex justify-between items-center mt-4">
                       <span className="text-sm font-medium text-gray-600">
-                        Estoque: {product.prod_Estoque || 0}
+                        Estoque: {product.prod_Estoque}
                       </span>
                       {product.prod_vmd > 0 && (
                         <span className="text-sm font-medium text-primary-600">
