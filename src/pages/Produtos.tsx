@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { Produto, Product } from '../types';
+import { Produto } from '../types';
 import { useCartStore } from '../store/cartStore';
 
 export default function Produtos() {
@@ -36,10 +36,7 @@ export default function Produtos() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {produtos.map((produto) => (
-            <div
-              key={produto.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden"
-            >
+            <div key={produto.id} className="bg-white rounded-lg shadow-md overflow-hidden">
               <img
                 src={produto.imagem_url || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e'}
                 alt={produto.prod_descricao}
@@ -50,21 +47,10 @@ export default function Produtos() {
                 <p className="text-gray-600 mt-2">{produto.prod_marca}</p>
                 <div className="mt-4 flex justify-between items-center">
                   <span className="text-xl font-bold text-gray-900">
-                    R$ {produto.prod_vmd?.toFixed(2)}
+                    R$ {produto.prod_preco?.toFixed(2)}
                   </span>
                   <button
-                    onClick={() => {
-                      const product: Product = {
-                        id: produto.id,
-                        name: produto.prod_descricao,
-                        description: produto.prod_descricao,
-                        price: produto.prod_vmd || 0,
-                        image_url: produto.imagem_url || '',
-                        stock: produto.prod_Estoque,
-                        created_at: produto.created_at
-                      };
-                      addItem(product);
-                    }}
+                    onClick={() => addItem(produto)}
                     className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
                   >
                     Adicionar ao Carrinho

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, LogOut, Home, Menu, User, ShoppingBag, History, Settings, Flame } from 'lucide-react';
+import { ShoppingCart, LogOut, Home, Menu, User, ShoppingBag, History, Settings } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useCartStore } from '../store/cartStore';
 import { supabase } from '../lib/supabase';
@@ -63,7 +63,7 @@ export default function Navbar() {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             <Link to="/" className="text-xl font-bold text-gray-800">
-              Ardor &amp; Arte
+              E-commerce
             </Link>
             <div className="text-gray-600">Carregando...</div>
           </div>
@@ -77,9 +77,8 @@ export default function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <Link to="/" className="flex items-center text-xl font-bold text-gray-800">
-              <Flame className="w-6 h-6 mr-2 text-red-500" />
-              <span style={{ fontFamily: 'Dancing Script, cursive' }}>Ardor &amp; Arte</span>
+            <Link to="/" className="text-xl font-bold text-gray-800">
+              E-commerce
             </Link>
           </div>
 

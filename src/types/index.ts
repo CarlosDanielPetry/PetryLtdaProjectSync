@@ -15,7 +15,6 @@ export interface Usuario {
 }
 
 export interface Produto {
-  imagem_url: string;
   id: string;
   prod_descricao: string;
   prod_codBarras: string;
