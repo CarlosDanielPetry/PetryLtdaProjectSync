@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../../lib/supabase';
 import { Eye, EyeOff } from 'lucide-react';
 import bcrypt from 'bcryptjs';
 
@@ -52,6 +52,7 @@ export default function Registro() {
     } catch (error) {
       console.error('Erro ao obter IP:', error);
       return '0.0.0.0'; // IP padrão em caso de erro
+      console.log;
     }
   };
 
