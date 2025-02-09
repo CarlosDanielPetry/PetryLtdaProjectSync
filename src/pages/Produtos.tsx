@@ -47,6 +47,15 @@ export default function Produtos() {
     }
   }
 
+  const getImagePrefix = (base64String: string | null | undefined) => {
+    if (!base64String) return '';
+    if (base64String.startsWith('/9j/')) {
+      return 'data:image/jpeg;base64,';
+    } else {
+      return 'data:image/png;base64,';
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">Todos os Produtos</h2>
@@ -61,7 +70,7 @@ export default function Produtos() {
             >
               {produto.prod_imagem && (
                 <img
-                  src={`data:image/png;base64,${produto.prod_imagem}`}
+                  src={`${getImagePrefix(produto.prod_imagem)}${produto.prod_imagem}`}
                   alt={produto.prod_descricao}
                   className="w-full h-48 object-cover"
                 />
