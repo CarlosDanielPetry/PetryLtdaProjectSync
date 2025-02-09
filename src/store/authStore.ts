@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { User } from '../types';
 import { supabase } from '../lib/supabase';
 import bcrypt from 'bcryptjs';
-
 interface AuthState {
   user: User | null;
   loading: boolean;
@@ -11,7 +10,6 @@ interface AuthState {
   signOut: () => Promise<void>;
   initialize: () => Promise<void>;
 }
-
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   loading: true,
@@ -19,7 +17,6 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       const { data: { session } } = await supabase.auth.getSession();
       set({ user: session?.user as User || null });
-
       supabase.auth.onAuthStateChange((_event, session) => {
         set({ user: session?.user as User || null });
       });
@@ -37,31 +34,25 @@ export const useAuthStore = create<AuthState>((set) => ({
         .select('usua_senha')
         .eq('usua_email', email.toLowerCase().trim())
         .single();
-
       if (userError) {
         console.error('Erro ao consultar usuário:', userError);
         throw new Error('Falha na autenticação');
       }
-
       if (!userData?.usua_senha) {
         throw new Error('Email ou senha inválidos');
       }
-
       // Verifica a senha usando bcrypt
       const isValidPassword = await bcrypt.compare(password, userData.usua_senha);
       if (!isValidPassword) {
         throw new Error('Email ou senha inválidos');
       }
-
       // Se a senha for válida, prossegue com a autenticação do Supabase
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-
       if (error) throw error;
       if (!data.user) throw new Error('Dados do usuário não retornados');
-
       set({ user: data.user as User });
       
       // Retorna a senha descriptografada

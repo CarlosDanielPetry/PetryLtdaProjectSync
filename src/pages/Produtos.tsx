@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { Produto, Product } from '../types';
-import { useCartStore } from '../store/cartStore';
+import { Produto } from '../types';
 
 export default function Produtos() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [loading, setLoading] = useState(true);
-  const addItem = useCartStore((state) => state.addItem);
 
   useEffect(() => {
     carregarProdutos();
@@ -16,10 +14,11 @@ export default function Produtos() {
     try {
       const { data, error } = await supabase
         .from('produtos')
-        .select('id, prod_descricao, prod_prvenda, prodaa_prvendaoferta, prod_imagem, prod_codBarras, prod_Estoque, prod_Grupo, prod_marca, prod_situacao, prod_vmd, created_at');
+        .select('*');
 
       if (error) {
         console.error("Supabase error:", error);
+        console.error("Supabase error details:", error.message, error.details);
         throw error;
       }
 
@@ -35,8 +34,9 @@ export default function Produtos() {
         prod_marca: item.prod_marca,
         prod_situacao: item.prod_situacao,
         prod_vmd: item.prod_vmd,
+        prod_ofstatus: item.prod_ofstatus,
         created_at: item.created_at,
-        prod_codigo: '0' // Provide a default value for prod_codigo as a string
+        prod_codigo: '0'
       } as Produto));
 
       setProdutos(produtosCorretos);
@@ -70,38 +70,16 @@ export default function Produtos() {
                 <h3 className="text-lg font-semibold text-gray-800">{produto.prod_descricao}</h3>
                 <div className="mt-4 flex justify-between items-center">
                   <div>
-                    {produto.prodaa_prvendaoferta ? (
-                      <>
-                        <span className="text-xl font-bold text-green-500">
-                          R$ {produto.prodaa_prvendaoferta?.toFixed(2)}
-                        </span>
-                        <span className="text-gray-500 line-through ml-2">
-                          R$ {produto.prod_prvenda?.toFixed(2)}
-                        </span>
-                      </>
+                    {produto.prod_ofstatus === 'S' ? (
+                      <span className="text-xl font-bold text-green-500">
+                        R$ {produto.prodaa_prvendaoferta?.toFixed(2)}
+                      </span>
                     ) : (
                       <span className="text-xl font-bold text-gray-900">
                         R$ {produto.prod_prvenda?.toFixed(2)}
                       </span>
                     )}
                   </div>
-                  <button
-                    onClick={() => {
-                      const product: Product = {
-                        id: produto.id,
-                        name: produto.prod_descricao,
-                        description: produto.prod_descricao,
-                        price: produto.prodaa_prvendaoferta || produto.prod_prvenda || 0,
-                        image_url: produto.prod_imagem ? `data:image/png;base64,${produto.prod_imagem}` : '',
-                        stock: produto.prod_Estoque,
-                        created_at: produto.created_at
-                      };
-                      addItem(product);
-                    }}
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
-                  >
-                    Adicionar ao Carrinho
-                  </button>
                 </div>
               </div>
             </div>
