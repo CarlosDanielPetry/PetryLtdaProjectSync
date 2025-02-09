@@ -2,8 +2,8 @@
 
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
-import { supabase } from '../lib/supabase';
+import { useAuthStore } from '../../store/authStore';
+import { supabase } from '../../lib/supabase';
 import { Eye, EyeOff } from 'lucide-react';
 import bcrypt from 'bcryptjs';
 

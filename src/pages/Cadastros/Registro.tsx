@@ -24,7 +24,7 @@ export default function Registro() {
       });
 
       // Se não der erro de "Invalid login credentials", significa que o email existe
-      if (!authError || !authError.message.includes('Invalid login credentials')) {
+      if (!authError || !authError.message.includes('credenciais de login inválidas')) {
         return true;
       }
 
@@ -52,7 +52,6 @@ export default function Registro() {
     } catch (error) {
       console.error('Erro ao obter IP:', error);
       return '0.0.0.0'; // IP padrão em caso de erro
-      console.log;
     }
   };
 
