@@ -15,6 +15,7 @@ export interface Usuario {
 }
 
 export interface Produto {
+  prod_codigo: string;
   id: string;
   prod_descricao: string;
   prod_codBarras: string;

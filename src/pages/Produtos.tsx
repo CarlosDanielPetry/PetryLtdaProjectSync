@@ -16,12 +16,14 @@ export default function Produtos() {
     try {
       const { data, error } = await supabase
         .from('produtos')
-        .select('id, prod_descricao, prod_prvenda, prodaa_prvendaoferta, prod_imagem, prod_codBarras, prod_Estoque, prod_Grupo, prod_marca, prod_situacao, prod_vmd, created_at')
-        .order('prod_codigo', { ascending: true });
+        .select('id, prod_descricao, prod_prvenda, prodaa_prvendaoferta, prod_imagem, prod_codBarras, prod_Estoque, prod_Grupo, prod_marca, prod_situacao, prod_vmd, created_at');
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
+      }
 
-      const produtosCorretos: Produto[] = (data || []).map((item) => ({
+      const produtosCorretos: Produto[] = (data || []).map((item: any) => ({
         id: item.id,
         prod_descricao: item.prod_descricao,
         prod_prvenda: item.prod_prvenda,
@@ -33,8 +35,9 @@ export default function Produtos() {
         prod_marca: item.prod_marca,
         prod_situacao: item.prod_situacao,
         prod_vmd: item.prod_vmd,
-        created_at: item.created_at
-      }));
+        created_at: item.created_at,
+        prod_codigo: '0' // Provide a default value for prod_codigo as a string
+      } as Produto));
 
       setProdutos(produtosCorretos);
     } catch (error) {
