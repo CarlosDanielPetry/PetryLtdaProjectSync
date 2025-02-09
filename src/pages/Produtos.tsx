@@ -17,33 +17,32 @@ export default function Produtos() {
       const { data, error } = await supabase
         .from('produtos')
         .select('id, prod_descricao, prod_prvenda, prodaa_prvendaoferta, prod_imagem, prod_codBarras, prod_Estoque, prod_Grupo, prod_marca, prod_situacao, prod_vmd, created_at')
-        .order('created_at', { ascending: false });
+        .order('prod_codigo', { ascending: true });
 
-    if (error) throw error;
+      if (error) throw error;
 
-    const produtosCorretos: Produto[] = (data || []).map((item/* erro */) => ({
-      // const produtosCorretos: Produto[] = (data || []).map((item: Produto) => ({
-      id: item.id,
-      prod_descricao: item.prod_descricao,
-      prod_prvenda: item.prod_prvenda,
-      prodaa_prvendaoferta: item.prodaa_prvendaoferta,
-      prod_imagem: item.prod_imagem,
-      prod_codBarras: item.prod_codBarras,
-      prod_Estoque: item.prod_Estoque,
-      prod_Grupo: item.prod_Grupo,
-      prod_marca: item.prod_marca,
-      prod_situacao: item.prod_situacao,
-      prod_vmd: item.prod_vmd,
-      created_at: item.created_at
-    }));
+      const produtosCorretos: Produto[] = (data || []).map((item) => ({
+        id: item.id,
+        prod_descricao: item.prod_descricao,
+        prod_prvenda: item.prod_prvenda,
+        prodaa_prvendaoferta: item.prodaa_prvendaoferta,
+        prod_imagem: item.prod_imagem,
+        prod_codBarras: item.prod_codBarras,
+        prod_Estoque: item.prod_Estoque,
+        prod_Grupo: item.prod_Grupo,
+        prod_marca: item.prod_marca,
+        prod_situacao: item.prod_situacao,
+        prod_vmd: item.prod_vmd,
+        created_at: item.created_at
+      }));
 
-    setProdutos(produtosCorretos);
-  } catch (error) {
-    console.error('Erro ao carregar produtos:', error);
-  } finally {
-    setLoading(false);
+      setProdutos(produtosCorretos);
+    } catch (error) {
+      console.error('Erro ao carregar produtos:', error);
+    } finally {
+      setLoading(false);
+    }
   }
-}
 
   return (
     <div className="max-w-7xl mx-auto">

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../../lib/supabase';
+import { Produto } from '../../types';
 
 export default function GerenciarProdutos() {
   const [loading, setLoading] = useState(false);
