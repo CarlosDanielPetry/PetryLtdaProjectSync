@@ -6,10 +6,16 @@ export default function Produtos() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [loading, setLoading] = useState(true);
 
+  /**
+   * Carrega os produtos do banco de dados.
+   */
   useEffect(() => {
     carregarProdutos();
   }, []);
 
+  /**
+   * Busca os produtos do Supabase e define o estado.
+   */
   async function carregarProdutos() {
     try {
       const { data, error } = await supabase
@@ -47,6 +53,11 @@ export default function Produtos() {
     }
   }
 
+  /**
+   * Determina o prefixo de imagem correto com base na string Base64.
+   * @param {string | null | undefined} base64String - A string Base64 da imagem.
+   * @returns {string} - O prefixo de imagem correto.
+   */
   const getImagePrefix = (base64String: string | null | undefined) => {
     if (!base64String) return '';
     if (base64String.startsWith('/9j/')) {

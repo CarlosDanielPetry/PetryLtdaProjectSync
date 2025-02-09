@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Produto } from '../../types';
 
-export default function GerenciarProdutos() {
+export default function CadProd() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -15,7 +15,12 @@ export default function GerenciarProdutos() {
     prod_situacao: 'A',
     prod_imagem: ''
   });
+  const imageInputRef = useRef<HTMLInputElement>(null);
 
+  /**
+   * Lida com o envio do formulário para criar um novo produto.
+   * @param {React.FormEvent} e - O evento de envio do formulário.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -93,6 +98,9 @@ export default function GerenciarProdutos() {
         prod_situacao: 'A',
         prod_imagem: ''
       });
+      if (imageInputRef.current) {
+        imageInputRef.current.value = '';
+      }
     } catch (error: any) {
       console.error('Erro inesperado:', error);
       setError('Erro inesperado. Verifique o console para mais detalhes.');
@@ -101,6 +109,10 @@ export default function GerenciarProdutos() {
     }
   };
 
+  /**
+   * Lida com o evento de mudança no input do código de barras.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - O evento de mudança.
+   */
   const handleBarcodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/[^0-9]/g, '');
     if (value.length > 13) {
@@ -109,20 +121,62 @@ export default function GerenciarProdutos() {
     setFormData({ ...formData, prod_codBarras: value });
   };
 
+  /**
+   * Lida com o evento de mudança no input do estoque.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - O evento de mudança.
+   */
   const handleEstoqueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/[^0-9.]/g, '');
     setFormData({ ...formData, prod_estoque: value });
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
+  /**
+   * Converte um arquivo de imagem para uma URL de dados PNG.
+   * @param {File} file - O arquivo de imagem a ser convertido.
+   * @returns {Promise<string>} - Uma promessa que resolve com a URL de dados PNG.
+   */
+  const convertImageToPng = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result as string;
-        setFormData({ ...formData, prod_imagem: base64String });
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0);
+          const pngDataUrl = canvas.toDataURL('image/png');
+          resolve(pngDataUrl);
+        };
+        img.onerror = (error) => {
+          reject(error);
+        };
+        img.src = event?.target?.result as string;
+      };
+      reader.onerror = (error) => {
+        reject(error);
       };
       reader.readAsDataURL(file);
+    });
+  };
+
+  /**
+   * Lida com o evento de mudança no input da imagem.
+   * Converte a imagem selecionada para PNG e a armazena como uma string Base64.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - O evento de mudança.
+   */
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      try {
+        const pngDataUrl = await convertImageToPng(file);
+        const base64String = pngDataUrl.substring(pngDataUrl.indexOf(',') + 1);
+        setFormData({ ...formData, prod_imagem: base64String });
+      } catch (error) {
+        console.error('Erro ao converter imagem para PNG:', error);
+        setError('Erro ao processar a imagem. Por favor, tente novamente.');
+      }
     }
   };
 
@@ -234,6 +288,7 @@ export default function GerenciarProdutos() {
               accept="image/*"
               onChange={handleImageChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              ref={imageInputRef}
             />
           </div>
 

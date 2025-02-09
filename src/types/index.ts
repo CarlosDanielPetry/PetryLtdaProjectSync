@@ -15,6 +15,7 @@ export interface Usuario {
 }
 
 export interface Produto {
+  prod_ofstatus: string;
   prod_codigo: string;
   id: string;
   prod_descricao: string;
@@ -65,7 +66,7 @@ export interface Produto {
   prod_vmd: number;
   prod_imagem?: string;
   prodaa_prvendaoferta?: number;
-  prod_prvenda?: number; // Adicione esta linha
+  prod_prvenda?: number;
   created_at: string;
 }
 
