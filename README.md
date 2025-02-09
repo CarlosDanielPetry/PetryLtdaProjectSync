@@ -146,3 +146,4 @@ Isso irá construir o projeto e fazer o deploy para o Netlify.
 Carlos Daniel Petry - Carlosdanielpetry@outlook.com.br - Responsável: Frontend  
 Juliano dos Santos  - ju.neno@hotmail.com              - Responsável: Backend/front  
 Ricardo Petry       - Ricardopettry@hotmail.com        - Responsável: Backend  
+
