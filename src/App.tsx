@@ -2,15 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Inicio from './pages/Inicio';
-import Login from './pages/Login';
-import Registro from './pages/Registro';
+import Cadastros from './pages/Cadastros/Login';
 import Produtos from './pages/Produtos';
-import GerenciarProdutos from './pages/GerenciarProdutos';
+import GerenciarProdutos from './pages/Cadastros/GerenciarProdutos';
 import Checkout from './pages/Checkout';
 import Relatorios from './pages/Relatorios';
 import { useAuthStore } from './store/authStore';
 import { supabase } from './lib/supabase';
 import { Usuario } from './types';
+import Registro from './pages/Cadastros/Registro';
+import Login from './pages/Cadastros/Login';
 
 function App() {
   const { user, loading, initialize } = useAuthStore();

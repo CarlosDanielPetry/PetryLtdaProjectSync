@@ -33,8 +33,12 @@ Isso iniciará o servidor de desenvolvimento.
 
 ```
 ├── .env                    # Arquivo de configuração das variáveis de ambiente
+├── .gitattributes          # Arquivo de atributos do Git
 ├── .gitignore              # Arquivo para ignorar arquivos no Git
+├── eslint.config.js        # Arquivo de configuração do ESLint
 ├── index.html              # Arquivo HTML principal
+├── netlify.toml            # Arquivo de configuração do Netlify
+├── package-lock.json       # Arquivo de lock das dependências do NPM
 ├── package.json            # Arquivo de configuração do projeto
 ├── postcss.config.js       # Arquivo de configuração do PostCSS
 ├── README.md               # Este arquivo
@@ -48,9 +52,13 @@ Isso iniciará o servidor de desenvolvimento.
 │   │   └── supabase.ts     # Cliente Supabase
 │   ├── pages               # Diretório com as páginas da aplicação
 │   │   ├── Inicio.tsx      # Página inicial
-│   │   ├── Login.tsx       # Página de login
+│   │   ├── Cadastros       # Diretório referente a cadastros
+│   │   │   ├── Login.tsx             # Página de login
+│   │   │   ├── GerenciarProdutos.tsx # Página de gerenciamento de produtos
+│   │   │   └── Registro.tsx          # Página de registro
 │   │   ├── Produtos.tsx    # Página de produtos
-│   │   └── ...             # Outras páginas
+│   │   ├── Checkout.tsx    # Página de checkout
+│   │   ├── Relatorios.tsx  # Página de relatórios
 │   ├── store               # Diretório com os stores do Zustand
 │   │   ├── authStore.ts    # Store de autenticação
 │   │   └── cartStore.ts    # Store do carrinho de compras
@@ -58,92 +66,23 @@ Isso iniciará o servidor de desenvolvimento.
 │   │   ├── global.css      # Estilos globais
 │   │   ├── theme           # Diretório com o tema
 │   │   │   ├── colors.ts   # Cores do tema
-│   │   │   └── ...         # Outros arquivos do tema
+│   │   │   ├── components.ts # Estilos dos componentes
+│   │   │   ├── images.ts   # Imagens do tema
+│   │   │   ├── index.ts    # Arquivo de índice do tema
+│   │   │   ├── spacing.ts  # Espaçamentos do tema
+│   │   │   └── typography.ts # Tipografia do tema
 │   ├── types               # Diretório com as definições de tipo
 │   │   └── index.ts        # Definições de tipo
 │   ├── vite-env.d.ts       # Definições de tipo do Vite
 │   └── main.tsx            # Arquivo de entrada da aplicação
 ├── tailwind.config.js      # Arquivo de configuração do Tailwind CSS
+├── tsconfig.app.json       # Arquivo de configuração do TypeScript para a aplicação
 ├── tsconfig.json           # Arquivo de configuração do TypeScript
+├── tsconfig.node.json      # Arquivo de configuração do TypeScript para o Node
 └── vite.config.ts          # Arquivo de configuração do Vite
 ```
+# Agradecimentos
 
-## Arquivo de referências de imagens (`src/assets/images.ts`)
-
-Este arquivo contém um objeto chamado `images` que centraliza as URLs das imagens usadas no site.
-
-**Como usar:**
-
-1.  Importe o objeto `images` nos componentes onde você precisa usar as imagens:
-
-```typescript
-import { images } from '@/assets/images';
-```
-
-2.  Use as URLs das imagens nos seus componentes:
-
-```typescript
-<img src={images.logo} alt="Logo" />
-<img src={images.heroBanner} alt="Banner Principal" />
-```
-
-Dessa forma, você terá um local centralizado para gerenciar as imagens do seu site e poderá facilmente alterar as URLs ou adicionar novas imagens no futuro.
-
-## Deploy no Netlify
-
-1.  **Instale a CLI do Netlify (se necessário):**
-
-```bash
-npm install -g netlify-cli
-```
-
-2.  **Faça login no Netlify:**
-
-```bash
-netlify login
-```
-
-3.  **Execute o deploy:**
-
-```bash
-netlify deploy --prod
-```
-
-## Deploy no Netlify
-
-Siga estes passos para fazer o deploy do projeto no Netlify:
-
-1.  **Instale a CLI do Netlify (se necessário):**
-
-    ```bash
-    npm install -g netlify-cli
-    ```
-
-2.  **Faça login no Netlify:**
-
-    ```bash
-    netlify login
-    ```
-
-3.  **Crie um arquivo `netlify.toml` na raiz do projeto com o seguinte conteúdo:**
-
-    ```toml
-    [build]
-      publish = "dist"
-      command = "npm run build"
-    ```
-
-4.  **Execute o deploy:**
-
-    ```bash
-    netlify deploy --prod
-    ```
-
-Isso irá construir o projeto e fazer o deploy para o Netlify.
-
-## Agradecimentos
-
-Carlos Daniel Petry - Carlosdanielpetry@outlook.com.br - Responsável: Frontend  
-Juliano dos Santos  - ju.neno@hotmail.com              - Responsável: Backend/front  
-Ricardo Petry       - Ricardopettry@hotmail.com        - Responsável: Backend  
-
+Ricardo Petry			  - Ricardopettry@gmail.com 										 - Responsável: Backend
+Juliano dos Santos  - ju.neno@hotmail.com 	  										 - Responsável: Backend/frontend 
+Carlos Daniel Petry - Carlosdanielpetry@outlook.com.br 						 - Responsável: Backend/frontend
