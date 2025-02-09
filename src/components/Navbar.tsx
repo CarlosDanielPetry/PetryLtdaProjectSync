@@ -94,8 +94,8 @@ export default function Navbar() {
                 
                 {canManageProducts && (
                   <>
-                    <Link to="/gerenciar-produtos" className="text-gray-600 hover:text-gray-800">
-                      Gerenciar Produtos
+                    <Link to="/cadProd" className="text-gray-600 hover:text-gray-800">
+                      Cadastro de Produtos
                     </Link>
                     <Link to="/relatorios" className="text-gray-600 hover:text-gray-800">
                       Relatórios

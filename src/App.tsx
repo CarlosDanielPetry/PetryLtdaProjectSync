@@ -4,7 +4,7 @@ import Navbar from './components/Navbar';
 import Inicio from './pages/Inicio';
 import Cadastros from './pages/Cadastros/Login';
 import Produtos from './pages/Produtos';
-import GerenciarProdutos from './pages/Cadastros/GerenciarProdutos';
+import CadProd from './pages/Cadastros/cadProd';
 import Checkout from './pages/Checkout';
 import Relatorios from './pages/Relatorios';
 import { useAuthStore } from './store/authStore';
@@ -74,7 +74,7 @@ function App() {
             {canAccessRestrictedAreas ? (
               <>
                 <Route path="/produtos" element={<Produtos />} />
-                <Route path="/gerenciar-produtos" element={<GerenciarProdutos />} />
+                <Route path="/cadProd" element={<CadProd />} />
                 <Route path="/relatorios" element={<Relatorios />} />
               </>
             ) : null}
