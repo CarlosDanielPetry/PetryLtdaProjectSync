@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Produto } from '../../types';
 
@@ -15,39 +15,48 @@ export default function CadProd() {
     prod_situacao: 'A',
     prod_imagem: ''
   });
-  const imageInputRef = useRef<HTMLInputElement>(null);
 
-  /**
-   * Lida com o envio do formulário para criar um novo produto.
-   * @param {React.FormEvent} e - O evento de envio do formulário.
-   */
+  // Função para obter o total de produtos (COUNT)
+  async function obterTotalProdutos() {
+    const { count, error } = await supabase
+      .from('produtos')
+      .select('id', { count: 'exact', head: true });
+    if (error) throw error;
+    return count || 0;
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     setSuccess(false);
 
-    // Validações
     if (formData.prod_descricao.length > 100) {
       setError('A descrição deve ter no máximo 100 caracteres');
       setLoading(false);
       return;
     }
 
-    if (formData.prod_codBarras && formData.prod_codBarras.length !== 13) {
+    if (formData.prod_codBarras && formData.prod_codBarras.length !== 13 || formData.prod_codBarras == null) {
       setError('O código de barras deve ter 13 caracteres');
       setLoading(false);
       return;
     }
 
-    if (formData.prod_grupo && formData.prod_grupo.length > 30) {
-      setError('O grupo deve ter no máximo 30 caracteres');
+    if (formData.prod_codBarras == null) {
+      setError('É obrigatório informar o código de barras do produto');
       setLoading(false);
       return;
     }
 
-    if (formData.prod_marca && formData.prod_marca.length > 30) {
+    if (formData.prod_marca && formData.prod_marca.length > 30 || formData.prod_marca == null) {
       setError('A marca deve ter no máximo 30 caracteres');
+      setLoading(false);
+      return;
+    }
+
+    if (formData.prod_marca == null) {
+      setError('É obrigatório informar a marca do produto');
       setLoading(false);
       return;
     }
@@ -66,18 +75,21 @@ export default function CadProd() {
     }
 
     try {
+      const totalProdutos = await obterTotalProdutos();
+
       const { data, error: supabaseError } = await supabase
         .from('produtos')
         .insert([
           {
             prod_descricao: formData.prod_descricao.trim(),
-            prod_codBarras: formData.prod_codBarras.trim() || null,
+            prod_codBarras: formData.prod_codBarras.trim(),
             prod_estoque: estoque,
-            prod_grupo: formData.prod_grupo.trim() || null,
-            prod_marca: formData.prod_marca.trim() || null,
+            prod_grupo: formData.prod_grupo.trim(),
+            prod_marca: formData.prod_marca.trim(),
             prod_situacao: formData.prod_situacao,
-            prod_vmd: 0, // Valor padrão
-            prod_imagem: formData.prod_imagem || null
+            prod_vmd: 0,
+            prod_imagem: formData.prod_imagem || null,
+            prod_codigo: totalProdutos + 1
           }
         ])
         .select();
@@ -85,6 +97,7 @@ export default function CadProd() {
       if (supabaseError) {
         console.error('Erro do Supabase:', supabaseError);
         setError(`Erro ao cadastrar produto: ${supabaseError.message}`);
+        setLoading(false);
         return;
       }
 
@@ -98,9 +111,6 @@ export default function CadProd() {
         prod_situacao: 'A',
         prod_imagem: ''
       });
-      if (imageInputRef.current) {
-        imageInputRef.current.value = '';
-      }
     } catch (error: any) {
       console.error('Erro inesperado:', error);
       setError('Erro inesperado. Verifique o console para mais detalhes.');
@@ -109,10 +119,6 @@ export default function CadProd() {
     }
   };
 
-  /**
-   * Lida com o evento de mudança no input do código de barras.
-   * @param {React.ChangeEvent<HTMLInputElement>} e - O evento de mudança.
-   */
   const handleBarcodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/[^0-9]/g, '');
     if (value.length > 13) {
@@ -121,62 +127,20 @@ export default function CadProd() {
     setFormData({ ...formData, prod_codBarras: value });
   };
 
-  /**
-   * Lida com o evento de mudança no input do estoque.
-   * @param {React.ChangeEvent<HTMLInputElement>} e - O evento de mudança.
-   */
   const handleEstoqueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/[^0-9.]/g, '');
     setFormData({ ...formData, prod_estoque: value });
   };
 
-  /**
-   * Converte um arquivo de imagem para uma URL de dados PNG.
-   * @param {File} file - O arquivo de imagem a ser convertido.
-   * @returns {Promise<string>} - Uma promessa que resolve com a URL de dados PNG.
-   */
-  const convertImageToPng = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          canvas.width = img.width;
-          canvas.height = img.height;
-          const ctx = canvas.getContext('2d');
-          ctx?.drawImage(img, 0, 0);
-          const pngDataUrl = canvas.toDataURL('image/png');
-          resolve(pngDataUrl);
-        };
-        img.onerror = (error) => {
-          reject(error);
-        };
-        img.src = event?.target?.result as string;
-      };
-      reader.onerror = (error) => {
-        reject(error);
-      };
-      reader.readAsDataURL(file);
-    });
-  };
-
-  /**
-   * Lida com o evento de mudança no input da imagem.
-   * Converte a imagem selecionada para PNG e a armazena como uma string Base64.
-   * @param {React.ChangeEvent<HTMLInputElement>} e - O evento de mudança.
-   */
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      try {
-        const pngDataUrl = await convertImageToPng(file);
-        const base64String = pngDataUrl.substring(pngDataUrl.indexOf(',') + 1);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
         setFormData({ ...formData, prod_imagem: base64String });
-      } catch (error) {
-        console.error('Erro ao converter imagem para PNG:', error);
-        setError('Erro ao processar a imagem. Por favor, tente novamente.');
-      }
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -288,16 +252,13 @@ export default function CadProd() {
               accept="image/*"
               onChange={handleImageChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              ref={imageInputRef}
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className={`w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors ${
-              loading ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
+            className={`w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             {loading ? 'Cadastrando...' : 'Cadastrar Produto'}
           </button>

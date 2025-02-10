@@ -23,8 +23,7 @@ export default function Produtos() {
         .select('*');
 
       if (error) {
-        console.error("Supabase error:", error);
-        console.error("Supabase error details:", error.message, error.details);
+        console.error('Erro ao buscar produtos do Supabase:', error.message);
         throw error;
       }
 
@@ -54,12 +53,25 @@ export default function Produtos() {
   }
 
   /**
+   * Valida se a string base64 é válida.
+   * @param {string} base64String
+   * @returns {boolean}
+   */
+  const isValidBase64 = (base64String: string) => {
+    const base64Regex = /^[A-Za-z0-9+/]+={0,2}$/;
+    return base64String && base64String.length % 4 === 0 && base64Regex.test(base64String);
+  };
+
+  /**
    * Determina o prefixo de imagem correto com base na string Base64.
    * @param {string | null | undefined} base64String - A string Base64 da imagem.
    * @returns {string} - O prefixo de imagem correto.
    */
   const getImagePrefix = (base64String: string | null | undefined) => {
-    if (!base64String) return '';
+    if (!base64String || !isValidBase64(base64String)) {
+      console.warn('Imagem base64 inválida:', base64String);
+      return '';
+    }
     if (base64String.startsWith('/9j/')) {
       return 'data:image/jpeg;base64,';
     } else {
@@ -79,10 +91,16 @@ export default function Produtos() {
               key={produto.id}
               className="bg-white rounded-lg shadow-md overflow-hidden"
             >
-              {produto.prod_imagem && (
+              {produto.prod_imagem && isValidBase64(produto.prod_imagem) ? (
                 <img
                   src={`${getImagePrefix(produto.prod_imagem)}${produto.prod_imagem}`}
                   alt={produto.prod_descricao}
+                  className="w-full h-48 object-cover"
+                />
+              ) : (
+                <img
+                  src="/caminho/para/imagem/padrao.png" // Imagem padrão caso o base64 seja inválido
+                  alt="Imagem não disponível"
                   className="w-full h-48 object-cover"
                 />
               )}
