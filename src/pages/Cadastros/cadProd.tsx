@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Produto } from '../../types';
 
 export default function CadProd() {
   const [loading, setLoading] = useState(false);
@@ -13,17 +12,9 @@ export default function CadProd() {
     prod_grupo: '',
     prod_marca: '',
     prod_situacao: 'A',
-    prod_imagem: ''
+    prod_imagem: '',
+    prod_prvenda: '' // Adicionado o campo para o preço normal
   });
-
-  // Função para obter o total de produtos (COUNT)
-  async function obterTotalProdutos() {
-        const { count, error } = await supabase
-      .from('produtos')
-      .select('*', { count: 'exact', head: true });
-    if (error) throw error;
-    return count || 0;
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,31 +22,20 @@ export default function CadProd() {
     setError('');
     setSuccess(false);
 
+    // Validações dos campos
     if (formData.prod_descricao.length > 100) {
       setError('A descrição deve ter no máximo 100 caracteres');
       setLoading(false);
       return;
     }
 
-    if (formData.prod_codBarras && formData.prod_codBarras.length !== 13 || formData.prod_codBarras == null) {
+    if (formData.prod_codBarras && formData.prod_codBarras.length !== 13) {
       setError('O código de barras deve ter 13 caracteres');
       setLoading(false);
       return;
     }
 
-    if (formData.prod_codBarras == null) {
-      setError('É obrigatório informar o código de barras do produto');
-      setLoading(false);
-      return;
-    }
-
-    if (formData.prod_marca && formData.prod_marca.length > 30 || formData.prod_marca == null) {
-      setError('A marca deve ter no máximo 30 caracteres');
-      setLoading(false);
-      return;
-    }
-
-    if (formData.prod_marca == null) {
+    if (!formData.prod_marca) {
       setError('É obrigatório informar a marca do produto');
       setLoading(false);
       return;
@@ -74,10 +54,37 @@ export default function CadProd() {
       return;
     }
 
-    try {
-      const totalProdutos = await obterTotalProdutos();
+    if (!formData.prod_prvenda) {
+      setError('O preço normal é obrigatório');
+      setLoading(false);
+      return;
+    }
 
-      const { data, error: supabaseError } = await supabase
+    const prvenda = parseFloat(formData.prod_prvenda);
+    if (isNaN(prvenda)) {
+      setError('O preço normal deve ser um número válido');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      // Obtém a contagem total de produtos
+      const { data, error: countError, count } = await supabase
+        .from('produtos')
+        .select('*', { count: 'exact', head: true });
+
+      if (countError) {
+        console.error('Erro ao obter contagem de produtos:', countError);
+        setError('Erro ao cadastrar produto: falha ao obter contagem de produtos.');
+        setLoading(false);
+        return;
+      }
+
+      // Garante que prodCodigo nunca seja nulo
+      const prodCodigo = (count ?? 0) + 1;
+
+      // Insere o novo produto no banco de dados
+      const { error: supabaseError } = await supabase
         .from('produtos')
         .insert([
           {
@@ -89,10 +96,10 @@ export default function CadProd() {
             prod_situacao: formData.prod_situacao,
             prod_vmd: 0,
             prod_imagem: formData.prod_imagem || null,
-            prod_codigo: totalProdutos + 1
+            prod_codigo: prodCodigo,
+            prod_prvenda: prvenda // Adicionado o preço normal
           }
-        ])
-        .select();
+        ]);
 
       if (supabaseError) {
         console.error('Erro do Supabase:', supabaseError);
@@ -109,7 +116,8 @@ export default function CadProd() {
         prod_grupo: '',
         prod_marca: '',
         prod_situacao: 'A',
-        prod_imagem: ''
+        prod_imagem: '',
+        prod_prvenda: '' // Limpa o campo do preço normal
       });
     } catch (error: any) {
       console.error('Erro inesperado:', error);
@@ -119,6 +127,7 @@ export default function CadProd() {
     }
   };
 
+  // Funções para lidar com as mudanças nos inputs
   const handleBarcodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/[^0-9]/g, '');
     if (value.length > 13) {
@@ -130,6 +139,11 @@ export default function CadProd() {
   const handleEstoqueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value.replace(/[^0-9.]/g, '');
     setFormData({ ...formData, prod_estoque: value });
+  };
+
+  const handlePrecoVendaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/[^0-9.]/g, '');
+    setFormData({ ...formData, prod_prvenda: value });
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -198,6 +212,19 @@ export default function CadProd() {
               type="number"
               value={formData.prod_estoque}
               onChange={handleEstoqueChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Preço Normal
+            </label>
+            <input
+              type="number"
+              value={formData.prod_prvenda}
+              onChange={handlePrecoVendaChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               required
             />
