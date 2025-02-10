@@ -13,7 +13,7 @@ export default function CadProd() {
     prod_marca: '',
     prod_situacao: 'A',
     prod_imagem: '',
-    prod_prvenda: '' // Adicionado o campo para o preço normal
+    prod_prvenda: ''
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,7 +22,6 @@ export default function CadProd() {
     setError('');
     setSuccess(false);
 
-    // Validações dos campos
     if (formData.prod_descricao.length > 100) {
       setError('A descrição deve ter no máximo 100 caracteres');
       setLoading(false);
