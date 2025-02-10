@@ -18,9 +18,9 @@ export default function CadProd() {
 
   // Função para obter o total de produtos (COUNT)
   async function obterTotalProdutos() {
-    const { count, error } = await supabase
+        const { count, error } = await supabase
       .from('produtos')
-      .select('id', { count: 'exact', head: true });
+      .select('*', { count: 'exact', head: true });
     if (error) throw error;
     return count || 0;
   }
