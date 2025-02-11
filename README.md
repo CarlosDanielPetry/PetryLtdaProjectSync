@@ -85,4 +85,4 @@ Isso iniciará o servidor de desenvolvimento.
 
 Ricardo Petry			  - Ricardopettry@gmail.com 										 - Responsável: Backend  
 Juliano dos Santos  - ju.neno@hotmail.com 	  										 - Responsável: Backend/frontend  
-Carlos Daniel Petry - Carlosdanielpetry@outlook.com.br 						 - Responsável: Backend/frontend  
+Carlos Daniel Petry - Carlosdanielpetry@outlook.com.br 						 - Responsável: Backend/frontend
