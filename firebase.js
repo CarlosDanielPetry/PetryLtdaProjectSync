@@ -16,6 +16,15 @@ const firebaseConfig = {
   measurementId: "G-3Z10CVSGZJ"
 };
 
+{
+  "hosting": {
+    "site": "petryltdaprojectsync",
+
+    "public": "public",
+    ...
+  }
+}
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
